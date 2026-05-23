@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass123
+      POSTGRES_DB: barangdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  api:
+    build: ./api
+    environment:
+      DB_HOST: db
+      DB_NAME: barangdb
+      DB_USER: postgres
+      DB_PASSWORD: pass123
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - frontend
+      - backend
+
+  web:
+    build: ./web
+    ports:
+      - "8000:5000"
+    environment:
+      API_URL: http://api:8080
+    depends_on:
+      - api
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db-data:

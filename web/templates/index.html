@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Manajemen Barang</title></head>
+<body>
+    <h2>Daftar Barang</h2>
+    <table border="1">
+        <tr><th>ID</th><th>Nama</th><th>Harga</th></tr>
+        {% for b in barangs %}
+        <tr><td>{{ b.id }}</td><td>{{ b.nama }}</td><td>{{ b.harga }}</td></tr>
+        {% endfor %}
+    </table>
+    <h3>Tambah Barang</h3>
+    <form method="POST">
+        Nama: <input type="text" name="nama" required>
+        Harga: <input type="number" name="harga" required>
+        <button type="submit">Simpan</button>
+    </form>
+</body>
+</html>
