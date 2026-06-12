@@ -1,19 +1,141 @@
 <!DOCTYPE html>
-<html>
-<head><title>Manajemen Barang</title></head>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplikasi Manajemen Barang - Sistem inventaris modern berbasis Docker">
+    <title>Manajemen Barang | Kompos App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
 <body>
-    <h2>Daftar Barang</h2>
-    <table border="1">
-        <tr><th>ID</th><th>Nama</th><th>Harga</th></tr>
-        {% for b in barangs %}
-        <tr><td>{{ b.id }}</td><td>{{ b.nama }}</td><td>{{ b.harga }}</td></tr>
-        {% endfor %}
-    </table>
-    <h3>Tambah Barang</h3>
-    <form method="POST">
-        Nama: <input type="text" name="nama" required>
-        Harga: <input type="number" name="harga" required>
-        <button type="submit">Simpan</button>
-    </form>
+    <!-- Animated Background Orbs -->
+    <div class="bg-effects">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-badge">
+                <span>🐳</span> Docker Powered
+            </div>
+            <h1>Manajemen Barang</h1>
+            <p class="subtitle">Sistem inventaris berbasis container — cepat, ringan, dan modern</p>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-label">Total Barang</div>
+                <div class="stat-value accent" id="stat-total">{{ barangs|length }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Nilai</div>
+                <div class="stat-value" id="stat-nilai">
+                    {% set ns = namespace(total=0) %}
+                    {% for b in barangs %}
+                        {% set ns.total = ns.total + b.harga %}
+                    {% endfor %}
+                    Rp {{ "{:,.0f}".format(ns.total).replace(",", ".") }}
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Status API</div>
+                <div class="stat-value" style="color: var(--success); font-size: 1rem;">● Online</div>
+            </div>
+        </div>
+
+        <!-- Add Item Form -->
+        <section class="glass-card form-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <div class="card-icon">✚</div>
+                    <h2>Tambah Barang Baru</h2>
+                </div>
+            </div>
+            <form method="POST" id="add-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nama">Nama Barang</label>
+                        <input type="text" id="nama" name="nama" placeholder="Contoh: Laptop Asus" required autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="harga">Harga (Rp)</label>
+                        <input type="number" id="harga" name="harga" placeholder="Contoh: 5000000" required min="0">
+                    </div>
+                    <button type="submit" class="btn-submit" id="btn-simpan">
+                        💾 Simpan
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Items Table -->
+        <section class="glass-card table-card">
+            <div class="card-header">
+                <div class="card-title-group">
+                    <div class="card-icon">📦</div>
+                    <h2>Daftar Barang</h2>
+                </div>
+                <span class="card-badge">{{ barangs|length }} item</span>
+            </div>
+
+            {% if barangs|length > 0 %}
+            <div class="table-wrapper">
+                <table id="barang-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Barang</th>
+                            <th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in barangs %}
+                        <tr class="row-enter" style="animation-delay: {{ loop.index0 * 0.05 }}s;">
+                            <td>#{{ b.id }}</td>
+                            <td><span class="item-name">{{ b.nama }}</span></td>
+                            <td>
+                                <span class="price-tag">
+                                    Rp {{ "{:,.0f}".format(b.harga).replace(",", ".") }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>Belum ada barang terdaftar</p>
+                <p class="empty-hint">Tambahkan barang pertamamu melalui formulir di atas</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Praktikum Komputasi Awan — Docker Orchestration</p>
+            <div class="tech-stack">
+                <span class="tech-badge">Flask</span>
+                <span class="tech-badge">PostgreSQL</span>
+                <span class="tech-badge">Docker</span>
+                <span class="tech-badge">Compose</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span>✓</span> Barang berhasil ditambahkan!
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

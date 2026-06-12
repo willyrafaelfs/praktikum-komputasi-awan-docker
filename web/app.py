@@ -10,7 +10,7 @@ def index():
         nama = request.form.get('nama')
         harga = request.form.get('harga')
         requests.post(f"{API_URL}/barang", json={"nama": nama, "harga": int(harga)})
-        return redirect('/')
+        return redirect('/?success=1')
     
     response = requests.get(f"{API_URL}/barang")
     barangs = response.json() if response.status_code == 200 else []
