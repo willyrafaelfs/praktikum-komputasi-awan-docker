@@ -50,6 +50,28 @@ body {
     overflow-x: hidden;
 }
 
+/* ===== SVG Icon System ===== */
+.icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.icon-sm {
+    width: 15px;
+    height: 15px;
+}
+
+.icon-lg {
+    width: 22px;
+    height: 22px;
+}
+
+.icon-xl {
+    width: 48px;
+    height: 48px;
+}
+
 /* ===== Animated Background ===== */
 .bg-effects {
     position: fixed;
@@ -200,6 +222,24 @@ body {
     background-clip: text;
 }
 
+.status-online {
+    color: var(--success);
+    font-size: 1rem !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
 /* ===== Glass Card ===== */
 .glass-card {
     background: var(--bg-card);
@@ -230,7 +270,8 @@ body {
     gap: 12px;
 }
 
-.card-header .card-icon {
+.card-header .card-icon,
+.modal-title-group .card-icon {
     width: 40px;
     height: 40px;
     background: var(--accent-gradient);
@@ -240,6 +281,12 @@ body {
     justify-content: center;
     font-size: 1.2rem;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+.card-icon-danger {
+    background: linear-gradient(135deg, #f43f5e, #e11d48) !important;
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3) !important;
 }
 
 .card-header h2 {
@@ -311,11 +358,14 @@ body {
 }
 
 .btn-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background: var(--accent-gradient);
     color: white;
     border: none;
     border-radius: var(--radius-md);
-    padding: 14px 32px;
+    padding: 14px 28px;
     font-size: 0.9rem;
     font-weight: 600;
     font-family: inherit;
@@ -388,6 +438,11 @@ thead th:last-child {
     border-radius: 0 var(--radius-sm) 0 0;
 }
 
+.th-actions {
+    text-align: center;
+    width: 120px;
+}
+
 tbody tr {
     transition: var(--transition-fast);
     border-bottom: 1px solid rgba(99, 102, 241, 0.06);
@@ -429,6 +484,44 @@ tbody td .price-tag {
     font-size: 0.85rem;
 }
 
+/* ===== Action Buttons ===== */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+}
+
+.btn-edit:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: var(--accent-light);
+}
+
+.btn-delete:hover {
+    background: var(--danger-bg);
+    border-color: rgba(244, 63, 94, 0.3);
+    color: var(--danger);
+}
+
 /* ===== Empty State ===== */
 .empty-state {
     text-align: center;
@@ -436,9 +529,11 @@ tbody td .price-tag {
 }
 
 .empty-state .empty-icon {
-    font-size: 3rem;
     margin-bottom: 16px;
-    opacity: 0.5;
+    color: var(--text-muted);
+    opacity: 0.4;
+    display: flex;
+    justify-content: center;
 }
 
 .empty-state p {
@@ -451,6 +546,156 @@ tbody td .price-tag {
     margin-top: 6px;
     color: var(--text-muted);
     opacity: 0.6;
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 500px;
+    margin: 24px;
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal {
+    transform: scale(1) translateY(0);
+}
+
+.modal-sm {
+    max-width: 420px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px 0;
+}
+
+.modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-title-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.btn-modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.btn-modal-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 28px 24px;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    padding: 12px 24px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px 24px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(244, 63, 94, 0.4);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+.delete-message {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.delete-hint {
+    color: var(--text-muted);
+    font-size: 0.8rem;
 }
 
 /* ===== Footer ===== */
@@ -508,6 +753,12 @@ tbody td .price-tag {
     box-shadow: var(--shadow-lg);
 }
 
+.toast.toast-danger {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.3);
+    color: var(--danger);
+}
+
 .toast.show {
     transform: translateX(0);
 }
@@ -525,7 +776,7 @@ tbody td .price-tag {
 
 @keyframes pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+    50% { opacity: 0.5; }
 }
 
 .row-enter {
@@ -558,6 +809,7 @@ tbody td .price-tag {
     .btn-submit {
         width: 100%;
         padding: 16px;
+        justify-content: center;
     }
 
     thead th, tbody td {
@@ -566,6 +818,14 @@ tbody td .price-tag {
 
     .bg-effects .orb {
         opacity: 0.15;
+    }
+
+    .th-actions {
+        width: 90px;
+    }
+
+    .modal {
+        margin: 16px;
     }
 }
 
@@ -581,5 +841,14 @@ tbody td .price-tag {
     .app-footer .tech-stack {
         flex-wrap: wrap;
         justify-content: center;
+    }
+
+    .action-buttons {
+        gap: 4px;
+    }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
     }
 }
