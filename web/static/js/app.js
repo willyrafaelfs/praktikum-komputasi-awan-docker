@@ -1,6 +1,7 @@
 /**
  * Kompos App - Frontend JavaScript
- * Handles toast notifications, edit/delete modals, and input validation.
+ * Toast notifications, edit/delete modals, input validation,
+ * plus pencarian realtime dan sorting kolom tabel.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -41,22 +42,83 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // === Modal Helpers ===
-    // Close modal on overlay click
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', function (e) {
-            if (e.target === this) {
-                this.classList.remove('active');
-            }
+            if (e.target === this) this.classList.remove('active');
         });
     });
 
-    // Close modal on Escape key
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.active').forEach(modal => {
                 modal.classList.remove('active');
             });
         }
+    });
+
+    // === Pencarian Realtime ===
+    const searchInput = document.getElementById('search-input');
+    const tbody = document.getElementById('barang-tbody');
+    const countBadge = document.getElementById('count-badge');
+    const noResults = document.getElementById('no-results');
+
+    function applySearch() {
+        if (!tbody) return;
+        const query = (searchInput.value || '').trim().toLowerCase();
+        let visible = 0;
+
+        tbody.querySelectorAll('tr').forEach(row => {
+            const nama = row.dataset.nama || '';
+            const id = row.dataset.id || '';
+            const match = nama.includes(query) || ('#' + id).includes(query) || id.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+
+        if (countBadge) countBadge.textContent = visible + ' item';
+        if (noResults) noResults.classList.toggle('hidden', visible !== 0);
+    }
+
+    if (searchInput) searchInput.addEventListener('input', applySearch);
+
+    // === Sorting Kolom ===
+    let sortState = { key: null, dir: 1 };
+
+    function applySort(key, type) {
+        if (!tbody) return;
+        sortState.dir = sortState.key === key ? -sortState.dir : 1;
+        sortState.key = key;
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+            let va = a.dataset[key];
+            let vb = b.dataset[key];
+            if (type === 'num') {
+                va = parseFloat(va) || 0;
+                vb = parseFloat(vb) || 0;
+                return (va - vb) * sortState.dir;
+            }
+            return va.localeCompare(vb) * sortState.dir;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+
+        // Update indikator panah pada header
+        document.querySelectorAll('.sort-th').forEach(th => {
+            const ind = th.querySelector('.sort-ind');
+            if (!ind) return;
+            if (th.dataset.key === key) {
+                ind.textContent = sortState.dir === 1 ? '↑' : '↓';
+                ind.classList.remove('opacity-30');
+            } else {
+                ind.textContent = '↕';
+                ind.classList.add('opacity-30');
+            }
+        });
+    }
+
+    document.querySelectorAll('.sort-th').forEach(th => {
+        th.addEventListener('click', () => applySort(th.dataset.key, th.dataset.type));
     });
 
 });
@@ -73,7 +135,6 @@ function openEditModal(id, nama, harga) {
     hargaInput.value = harga;
 
     modal.classList.add('active');
-    // Focus the nama input after animation
     setTimeout(() => namaInput.focus(), 300);
 }
 
