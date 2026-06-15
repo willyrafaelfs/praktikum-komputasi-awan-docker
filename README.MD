@@ -27,7 +27,22 @@ Arsitektur aplikasi telah dimodifikasi untuk memenuhi penyelesaian Tugas Mandiri
 * **Database**: PostgreSQL 15 (Alpine)
 * **Backend API**: Python (Flask) + Psycopg2
 * **Frontend Web**: Python (Flask) + Requests
+* **UI**: Tailwind CSS (Play CDN) + Vanilla JavaScript
 * **Orchestration**: Docker Compose
+
+---
+
+## 🎨 Fitur Antarmuka Web
+
+Antarmuka frontend dibangun dengan tema *dark glassmorphism* yang modern dan responsif, menggunakan **Tailwind CSS** via Play CDN (tanpa *build step* sehingga kontainer tetap ringan).
+
+* **Operasi CRUD**: Tambah, edit (modal), dan hapus barang (modal konfirmasi) terhadap data inventaris.
+* **Pencarian Realtime**: Filter daftar barang secara langsung berdasarkan nama atau ID tanpa *reload* halaman.
+* **Sorting Kolom**: Urutkan tabel secara *ascending/descending* dengan mengklik header kolom (ID, Nama, Harga).
+* **Statistik Ringkas**: Kartu statistik untuk total barang, total nilai inventaris, dan status API.
+* **Umpan Balik**: Notifikasi *toast* untuk setiap aksi serta *empty state* saat data masih kosong.
+
+> **Catatan**: Karena Tailwind dimuat lewat Play CDN, halaman membutuhkan koneksi internet saat dibuka. Untuk kebutuhan produksi sebaiknya Tailwind di-*compile* saat *build image*.
 
 ---
 
